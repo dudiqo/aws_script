@@ -6,6 +6,18 @@
 
 from pprint import pprint
 import boto3
+import argparse
+
+# Get parameters provided by the user
+def prepare_args():
+    parser = argparse.ArgumentParser(description='AWS resoruces')
+
+    parser.add_argument('-p', '--profile', help="AWS credentials profile name", required=False, argument_default='default')
+    parser.add_argument('-r', '--region', help="AWS region", required=True)
+    parser.add_argument('-m', '--methods', help="HTTP methods", required=False)
+    parser.add_argument('-o', '--output', help="Output format", required=False)
+    return parser.parse_args()
+
 
 # Establishes session and client connection
 session = boto3.Session(profile_name='default')
@@ -36,14 +48,6 @@ def list_resources():
         #return resource_list['items']
     for i in resource_list['items']:
         print(i)
-
-def json():
-    ids = get_ids()
-    for id in ids:
-        print({
-            'api_id': {id}
-        })
-
 
 pprint(get_ids())
 

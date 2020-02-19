@@ -1,13 +1,11 @@
 #
 # Python script to get resource data from AWS API Gateaway
 #
-# Required libraries: boto3, argparse
+# Required libraries: boto3, argparse, json, csv
 # Place credentials file in ~/.aws/credentials
 
 from pprint import pprint
-import boto3
-import argparse
-import json
+import boto3, argparse, json, csv
 
 # Gets parameters provided by the user
 def prepare_args():
@@ -40,44 +38,58 @@ def list_resources(connection, apis):
         resources.append(resource)
     return resources
 
-# Generates json
+# Generates json file
 def generate_json(apis, resources):
     for api in apis:
         i = 0
-        full_output = []
+        full_output = {}
         output  = {
             'id': api['id'],
             'name': api['name'],
             'description': api['description'],
-            'resources': resources
+            'resources': 'resources'
         }
-        full_output.append(output)
+        full_output.update({i:output})
         i += 1
-    
-    with open("resources.json", "w") as write_file:
-        json.dump(output, write_file)
 
+    with open("resources.json", "w") as write_file:
+         json.dump(output, write_file)
+    
     return full_output
 
-# Generates pretty json
-def generate_json_pretty(json_file):
-    parsed = json.loads(json_file)
-    pretty = json.dumps(parsed, indent=4, sort_keys=True)
-    
-    with open("resources_p.json", "w") as write_file:
-        json.dump(pretty, write_file)
+# Generates json pretty file
+def generate_json_pretty():
+    obj = None
+    with open('resources.json') as f:
+        obj = json.load(f)
 
+    outfile = open('resources.json', "w")
+    outfile.write(json.dumps(obj, indent=4, sort_keys=True))
+    outfile.close()
+
+# Generate CSV file
+def generate_csv(dictionary):
+    with open('resources.csv','w') as f:
+        w = csv.writer(f)
+        w.writerows(dictionary.items())
+
+# Main
+def main():
+    pass
 
 args = prepare_args()
 connection = connect(args)
 apis = get_apis(connection)
 resources = list_resources(connection, apis)
+
+
+#pprint(resources)
 #pprint(resources)
 #json = generate_json(apis, resources)
 #generate_json_pretty(json)
 #pprint(generate_json(apis, resources))
-json_file = generate_json(apis, resources)
-generate_json_pretty(json_file)
+pprint(resources)
+
 
 #response = api_client.get_deployments(restApiId='n2nrifq6mg')
 #print(response)

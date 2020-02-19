@@ -13,7 +13,7 @@ def prepare_args():
     parser.add_argument('-p', '--profile', help="AWS credentials profile name", required=False, default='default')
     parser.add_argument('-r', '--region', help="AWS region", required=True)
     parser.add_argument('-m', '--methods', help="HTTP methods", required=False)
-    parser.add_argument('-o', '--output', help="Output format", required=False, choices=['json', 'csv', 'json-pretty'])
+    parser.add_argument('-o', '--output', help="Output format", required=False, default='json-pretty', choices=['json', 'csv', 'json-pretty'])
     args = parser.parse_args()
     return args
 
@@ -49,7 +49,6 @@ def render_resources(resources):
 # Generates json file
 def generate_json(apis, resources):
     for api in apis:
-        i = 0
         full_output = {}
         output  = {
             'api_id': api['id'],
@@ -57,8 +56,7 @@ def generate_json(apis, resources):
             'description': api['description'],
             'resources': resources
         }
-        full_output.update({i:output})
-        i += 1
+        full_output.update(output)
 
     with open("resources.json", "w") as write_file:
         json.dump(full_output, write_file)
@@ -90,12 +88,17 @@ def main():
 
     if args.output == 'json':
         generate_json(apis, resources)
-    if args.output == 'json-pretty':
+        print('JSON file generated')
+    elif args.output == 'json-pretty':
         generate_json(apis, resources)
         generate_json_pretty()
-    if args.output == 'csv':
+        print('JSON-PRETTY file generated')
+    elif args.output == 'csv':
         json = generate_json(apis, resources)
         generate_csv(json)
+        print('CSV file generated')
+    else:
+        print('Unable to generate file')
 
 main()
 

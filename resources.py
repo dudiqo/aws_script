@@ -17,7 +17,7 @@ def get_ids():
     items = api_client.get_rest_apis()['items']
     ids = []
     for item in items:
-        ids.append(item['id'])
+        ids.append(item)
     return ids
 
 #Gets information about specific APIs
@@ -35,12 +35,17 @@ def list_resources():
         #pprint(resource_list['items'])
         #return resource_list['items']
     for i in resource_list['items']:
-        print(i['path'])
+        print(i)
+
+def json():
+    ids = get_ids()
+    for id in ids:
+        print({
+            'api_id': {id}
+        })
 
 
-
-print(get_ids())
-list_resources()
+pprint(get_ids())
 
 #response = api_client.get_deployments(restApiId='n2nrifq6mg')
 #print(response)

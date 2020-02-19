@@ -19,9 +19,13 @@ def prepare_args():
 
 # Establishes session and client connection
 def connect(args):
-    session = boto3.Session(profile_name=args.profile)
-    api_client = session.client('apigateway', region_name=args.region)
-    return api_client
+    try:
+        session = boto3.Session(profile_name=args.profile)
+        api_client = session.client('apigateway', region_name=args.region)
+        print(f'Connected successfuly to region {args.region.upper()} using profile {args.profile.upper()}')
+        return api_client
+    except Exception as e:
+        print('Unable to connect:', e)
 
 # Lists APIs
 def get_apis(connection):
@@ -38,22 +42,26 @@ def list_resources(connection, apis):
         resources.append(resource)
     return resources
 
+# Render resources
+def render_resources(resources):
+    pass
+
 # Generates json file
 def generate_json(apis, resources):
     for api in apis:
         i = 0
         full_output = {}
         output  = {
-            'id': api['id'],
+            'api_id': api['id'],
             'name': api['name'],
             'description': api['description'],
-            'resources': 'resources'
+            'resources': resources
         }
         full_output.update({i:output})
         i += 1
 
     with open("resources.json", "w") as write_file:
-         json.dump(output, write_file)
+        json.dump(full_output, write_file)
     
     return full_output
 
@@ -75,21 +83,23 @@ def generate_csv(dictionary):
 
 # Main
 def main():
-    pass
+    args = prepare_args()
+    connection = connect(args)
+    apis = get_apis(connection)
+    resources = list_resources(connection, apis)
 
-args = prepare_args()
-connection = connect(args)
-apis = get_apis(connection)
-resources = list_resources(connection, apis)
+    if args.output == 'json':
+        generate_json(apis, resources)
+    if args.output == 'json-pretty':
+        generate_json(apis, resources)
+        generate_json_pretty()
+    if args.output == 'csv':
+        json = generate_json(apis, resources)
+        generate_csv(json)
 
+main()
 
-#pprint(resources)
-#pprint(resources)
-#json = generate_json(apis, resources)
-#generate_json_pretty(json)
+#generate_csv(json)
 #pprint(generate_json(apis, resources))
-pprint(resources)
-
-
 #response = api_client.get_deployments(restApiId='n2nrifq6mg')
 #print(response)

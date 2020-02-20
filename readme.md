@@ -16,6 +16,6 @@ Available parameters:<br><ul>
     <li>-r (AWS region; mandatory)</li>
     <li>-m (HTTP methods to check; if not provided check all)</li>
     <li>-o (Output format: json, json-pretty, csv; if not provided generate json-pretty)</li>
-</ul><br>
+</ul>
 Sample use:<br>
 <code>python resources.py -r us-east-1</code>

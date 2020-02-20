@@ -1,22 +1,83 @@
-import json
+from pprint import pprint
 
-data = {}
-data['people'] = []
-data['people'].append({
-    'name': 'Scott',
-    'website': 'stackabuse.com',
-    'from': 'Nebraska'
-})
-data['people'].append({
-    'name': 'Larry',
-    'website': 'google.com',
-    'from': 'Michigan'
-})
-data['people'].append({
-    'name': 'Tim',
-    'website': 'apple.com',
-    'from': 'Alabama'
-})
+dict = {
+    'position': 'string',
+    'items': [
+        {
+            'id': 'string',
+            'parentId': 'string',
+            'pathPart': 'string',
+            'path': 'string',
+            'resourceMethods': {
+                'string': {
+                    'httpMethod': 'string',
+                    'authorizationType': 'string',
+                    'authorizerId': 'string',
+                    'apiKeyRequired': True,
+                    'requestValidatorId': 'string',
+                    'operationName': 'string',
+                    'requestParameters': {
+                        'string': True
+                    },
+                    'requestModels': {
+                        'string': 'string'
+                    },
+                    'methodResponses': {
+                        'string': {
+                            'statusCode': 'string',
+                            'responseParameters': {
+                                'string': True
+                            },
+                            'responseModels': {
+                                'string': 'string'
+                            }
+                        }
+                    },
+                    'methodIntegration': {
+                        'type': 'HTTP',
+                        'httpMethod': 'string',
+                        'uri': 'string',
+                        'connectionType': 'INTERNET',
+                        'connectionId': 'string',
+                        'credentials': 'string',
+                        'requestParameters': {
+                            'string': 'string'
+                        },
+                        'requestTemplates': {
+                            'string': 'string'
+                        },
+                        'passthroughBehavior': 'string',
+                        'contentHandling': 'CONVERT_TO_BINARY',
+                        'timeoutInMillis': 123,
+                        'cacheNamespace': 'string',
+                        'cacheKeyParameters': [
+                            'string',
+                        ],
+                        'integrationResponses': {
+                            'string': {
+                                'statusCode': 'string',
+                                'selectionPattern': 'string',
+                                'responseParameters': {
+                                    'string': 'string'
+                                },
+                                'responseTemplates': {
+                                    'string': 'string'
+                                },
+                                'contentHandling': 'CONVERT_TO_BINARY'
+                            }
+                        }
+                    },
+                    'authorizationScopes': [
+                        'string',
+                    ]
+                }
+            }
+        },
+    ]
+}
 
-with open('data.txt', 'w') as outfile:
-    json.dump(data, outfile)
+final = {
+    'apiKeyRequired' : dict['items'][0]['resourceMethods']['string']['apiKeyRequired']
+    }
+
+pprint(final)

@@ -43,20 +43,41 @@ def list_resources(connection, apis):
     return resources
 
 # Render resources
-def render_resources(resources):
-    pass
+#def render_resources(resources, connection, apis):
+    # full_output = []
+    # for api in apis:
+    #     i = 0
+    #     rl = connection.get_resources(restApiId=api['id'])
+    #     ll = len(rl['items'])
+    #     rls = []
+    #     while i < ll:
+    #         a=rl['items'][i]['resourceMethods']['GET']['authorizationType']
+    #         b=rl['items'][i]['resourceMethods']['GET']['apiKeyRequired']
+    #         output = {
+    #             'authorizationType' : a,
+    #             'apiKeyRequired' : b
+    #         }
+    #         i += 1
+    #         rls.append(output)
+    #     full_output.append(rls)
+    # with open("resources.json", "w") as write_file:
+    #     json.dump(full_output, write_file)
+    
+    # return full_output
 
 # Generates json file
-def generate_json(apis, resources):
+def generate_json(apis, resources, connection):
+    full_output = []
     for api in apis:
-        full_output = {}
+        resource_list = connection.get_resources(restApiId=api['id'])
+        reso = resource_list['items']
         output  = {
             'api_id': api['id'],
             'name': api['name'],
             'description': api['description'],
-            'resources': resources
+            'resources': reso
         }
-        full_output.update(output)
+        full_output.append(output)
 
     with open("resources.json", "w") as write_file:
         json.dump(full_output, write_file)
@@ -87,14 +108,14 @@ def main():
     resources = list_resources(connection, apis)
 
     if args.output == 'json':
-        generate_json(apis, resources)
+        generate_json(apis, resources,connection)
         print('JSON file generated')
     elif args.output == 'json-pretty':
-        generate_json(apis, resources)
+        generate_json(apis, resources,connection)
         generate_json_pretty()
         print('JSON-PRETTY file generated')
     elif args.output == 'csv':
-        json = generate_json(apis, resources)
+        json = generate_json(apis, resources,connection)
         generate_csv(json)
         print('CSV file generated')
     else:

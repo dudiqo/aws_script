@@ -1,18 +1,20 @@
 #
 # Python script to get resource data from AWS API Gateaway
 #
-# Required libraries: boto3, argparse, json, csv
-# Place credentials file in ~/.aws/credentials
+# Required libraries: boto3, argparse, json, csv, pandas, os
+# Place credentials file in ~/.aws/credentials (C:\Users\USER_NAME\.aws\credentials for Windows users)
+#
 
-from pprint import pprint
-import boto3, argparse, json, csv
+# from pprint import pprint
+import boto3, argparse, json, csv, os
+import pandas as pd
 
 # Gets parameters provided by the user
 def prepare_args():
     parser = argparse.ArgumentParser(description='AWS resoruces')
     parser.add_argument('-p', '--profile', help="AWS credentials profile name", required=False, default='default')
     parser.add_argument('-r', '--region', help="AWS region", required=True)
-    parser.add_argument('-m', '--methods', help="HTTP methods", required=False)
+    parser.add_argument('-m', '--methods', help="HTTP methods", required=False) # not implemented
     parser.add_argument('-o', '--output', help="Output format", required=False, default='json-pretty', choices=['json', 'csv', 'json-pretty'])
     args = parser.parse_args()
     return args
@@ -95,10 +97,10 @@ def generate_json_pretty():
     outfile.close()
 
 # Generate CSV file
-def generate_csv(dictionary):
-    with open('resources.csv','w') as f:
-        w = csv.writer(f)
-        w.writerows(dictionary.items())
+def generate_csv():
+    df = pd.read_json('resources.json')
+    df.to_csv('resources.csv', index = None, header = True)
+    os.remove("resources.json")
 
 # Main
 def main():
@@ -115,15 +117,10 @@ def main():
         generate_json_pretty()
         print('JSON-PRETTY file generated')
     elif args.output == 'csv':
-        json = generate_json(apis, resources,connection)
-        generate_csv(json)
+        generate_json(apis, resources,connection)
+        generate_csv()
         print('CSV file generated')
     else:
         print('Unable to generate file')
 
 main()
-
-#generate_csv(json)
-#pprint(generate_json(apis, resources))
-#response = api_client.get_deployments(restApiId='n2nrifq6mg')
-#print(response)
